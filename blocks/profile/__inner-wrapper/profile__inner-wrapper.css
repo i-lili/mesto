@@ -1,0 +1,11 @@
+.profile__inner-wrapper {
+  display: flex;
+  align-items: flex-end;
+  gap: 18px;
+}
+
+@media screen and (max-width: 765px) {
+  .profile__inner-wrapper {
+    gap: 10px;
+  }
+}
