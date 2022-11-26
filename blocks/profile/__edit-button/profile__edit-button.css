@@ -7,6 +7,7 @@
   width: 100%;
   height: 24px;
   transition: 0.5s;
+  margin-bottom: 8px;
 }
 
 @media screen and (max-width: 765px) {
@@ -14,6 +15,8 @@
     background-size: 7.5px 7.5px;
     width: 18px;
     height: 18px;
+    align-self: center;
+    margin: 0;
   }
 }
 

@@ -1,7 +1,8 @@
 .profile__inner-wrapper {
   display: flex;
-  align-items: flex-end;
   gap: 18px;
+  align-items: flex-end;
+
 }
 
 @media screen and (max-width: 765px) {

@@ -5,11 +5,10 @@
   font-size: 18px;
   line-height: 22px;
   color: #fff;
-  max-width: 358px;
   width: 100%;
   min-height: 50px;
   padding: 0;
-  margin: 48px 0 37px;
+  margin-top: 48px;
   border: none;
   transition: 0.5s;
 }
@@ -18,9 +17,7 @@
   .popup__save {
     font-size: 14px;
     line-height: 17px;
-    max-width: 238px;
     min-height: 46px;
-    margin: 45px 0 25px;
   }
 }
 
