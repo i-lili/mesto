@@ -5,11 +5,10 @@
   border: none;
   padding: 0;
   margin: 5px 5px 1px 0;
-  transition: 0.5s;
+  cursor: pointer;
 }
 
 .element__like:hover {
   opacity: 0.5;
-  cursor: pointer;
 }
 
