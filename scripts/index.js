@@ -4,10 +4,12 @@ const addPopup = document.querySelector("#add-popup");
 const imagePopup = document.querySelector("#image-popup");
 
 const popupCloseButtonElements = document.querySelectorAll(".popup__close");
-const editPopupOpenButtonElement = document.querySelector(".profile__edit-button");
+const editPopupOpenButtonElement = document.querySelector(
+  ".profile__edit-button"
+);
 
-const formElement = document.querySelector('[name="edit"]');
-const form = document.querySelector('[name="add"]');
+const formElementEdit = document.querySelector('[name="edit"]');
+const formElementAdd = document.querySelector('[name="add"]');
 
 const nameInput = document.querySelector(".popup__input_item_name");
 const jobInput = document.querySelector(".popup__input_item_job");
@@ -21,12 +23,18 @@ const elementImage = document.querySelector(".element__image");
 const profileName = document.querySelector(".profile__name");
 const profileJob = document.querySelector(".profile__job");
 
-const addPopupOpenButtonElement = document.querySelector(".profile__add-button");
+const addPopupOpenButtonElement = document.querySelector(
+  ".profile__add-button"
+);
 
 const cardElements = document.querySelector(".elements");
 
 const popupImage = document.querySelector(".popup__image");
 const popupCaption = document.querySelector(".popup__caption");
+
+const initialTemplate = document
+  .querySelector("#element-template")
+  .content.querySelector(".element");
 
 // Открытие и закрытие попапов
 function openPopup(popup) {
@@ -51,15 +59,15 @@ popupCloseButtonElements.forEach((button) => {
 });
 
 // Редактированиe профиля
-function formSubmitHandler(evt) {
-  evt.preventDefault();
+function handleProfileFormSubmit(e) {
+  e.preventDefault();
 
   profileName.textContent = nameInput.value;
   profileJob.textContent = jobInput.value;
   closePopup(editPopup);
 }
 
-formElement.addEventListener("submit", formSubmitHandler);
+formElementEdit.addEventListener("submit", handleProfileFormSubmit);
 
 // 1. Шесть карточек «из коробки»
 const initialCards = [
@@ -96,10 +104,6 @@ addPopupOpenButtonElement.addEventListener("click", () => {
 
 // 3. Добавление карточки
 function createElement(item) {
-  const initialTemplate = document
-    .querySelector("#element-template")
-    .content.querySelector(".element");
-
   const initial = initialTemplate.cloneNode(true);
   const initialTitle = initial.querySelector(".element__title");
   const initialLink = initial.querySelector(".element__image");
@@ -112,6 +116,7 @@ function createElement(item) {
 
   initialTitle.textContent = item.title;
   initialLink.src = item.link;
+  initialLink.alt = `Картинка: ${item.title}`;
 
   // 6. Открытие попапа с картинкой
   initialLink.addEventListener("click", (e) => {
@@ -152,6 +157,7 @@ const handleFormSubmit = (e) => {
   };
   renderInitial(initial, cardElements);
   closePopup(addPopup);
+  e.target.reset();
 };
 
-form.addEventListener("submit", handleFormSubmit);
+formElementAdd.addEventListener("submit", handleFormSubmit);
