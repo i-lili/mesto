@@ -42,6 +42,15 @@ const enableValidation = (config) => {
       e.preventDefault();
     });
 
+    // Кнопка добавления новой карточки не активна при первом открытии попапа, не позволяет добавить пустую карточку.
+    // Кнопка не активна если карточку добавили и открыли попап снова.
+    toggleButton(inputs, button, config);
+    form.addEventListener("reset", () => {
+      setTimeout(() => {
+        toggleButton(inputs, button, config);
+      }, 0);
+    });
+
     inputs.forEach((input) => {
       input.addEventListener("input", () => {
         // показать ошибку
