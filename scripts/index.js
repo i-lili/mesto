@@ -1,6 +1,8 @@
 const popupElement = document.querySelector(".popup");
+
 const editPopup = document.querySelector("#edit-popup");
 const addPopup = document.querySelector("#add-popup");
+
 const imagePopup = document.querySelector("#image-popup");
 
 const popupCloseButtonElements = document.querySelectorAll(".popup__close");
@@ -36,21 +38,45 @@ const initialTemplate = document
   .querySelector("#element-template")
   .content.querySelector(".element");
 
+// Закрытие попапа нажатием на Esc
+const closePopupByEsc = (e) => {
+  if (e.key === "Escape") {
+    const popup = document.querySelector(".popup_is-opened");
+
+    closePopup(popup);
+  }
+};
+// Закрытие попапа нажатием на overlay
+const closePopupByOverlay = (e) => {
+  if (!e.target.closest(".popup__container"))
+    closePopup(e.target.closest(".popup"));
+};
+
 // Открытие и закрытие попапов
-function openPopup(popup) {
-  popup.classList.toggle("popup_is-opened");
-}
+const closePopup = (popup) => {
+  popup.classList.remove("popup_is-opened");
+  // Закрытие попапа нажатием на Esc
+  document.removeEventListener("keyup", closePopupByEsc);
+  // Закрытие попапа нажатием на overlay
+  document.removeEventListener("click", closePopupByOverlay);
+};
 
-function closePopup(popup) {
-  popup.classList.toggle("popup_is-opened");
-}
+const openPopup = (popup) => {
+  popup.classList.add("popup_is-opened");
+  // Открытие попапа нажатием на Esc
+  document.addEventListener("keyup", closePopupByEsc);
+  // Открытие попапа нажатием на overlay
+  document.addEventListener("click", closePopupByOverlay);
+};
 
+// Открытие формы редактирования профиля
 editPopupOpenButtonElement.addEventListener("click", () => {
   nameInput.value = profileName.textContent;
   jobInput.value = profileJob.textContent;
   openPopup(editPopup);
 });
 
+// Закрытие попапа
 popupCloseButtonElements.forEach((button) => {
   const popup = button.closest(".popup");
   button.addEventListener("click", () => {
@@ -58,7 +84,7 @@ popupCloseButtonElements.forEach((button) => {
   });
 });
 
-// Редактированиe профиля
+// Редактированиe и закрытие попапа
 function handleProfileFormSubmit(e) {
   e.preventDefault();
 
@@ -67,9 +93,10 @@ function handleProfileFormSubmit(e) {
   closePopup(editPopup);
 }
 
+// Отправка формы
 formElementEdit.addEventListener("submit", handleProfileFormSubmit);
 
-// 1. Шесть карточек «из коробки»
+// Шесть карточек «из коробки»
 const initialCards = [
   {
     title: "Архыз",
@@ -97,12 +124,12 @@ const initialCards = [
   },
 ];
 
-// 2. Форма добавления карточки
+// Открытие формы добавления карточки
 addPopupOpenButtonElement.addEventListener("click", () => {
   openPopup(addPopup);
 });
 
-// 3. Добавление карточки
+// Создание карточки
 function createElement(item) {
   const initial = initialTemplate.cloneNode(true);
   const initialTitle = initial.querySelector(".element__title");
@@ -118,7 +145,7 @@ function createElement(item) {
   initialLink.src = item.link;
   initialLink.alt = `Картинка: ${item.title}`;
 
-  // 6. Открытие попапа с картинкой
+  // Открытие попапа с картинкой
   initialLink.addEventListener("click", (e) => {
     popupImage.src = e.target.src;
     popupImage.alt = e.target.alt;
@@ -129,16 +156,17 @@ function createElement(item) {
   return initial;
 }
 
-// 4. Лайк карточки
+// Лайк карточки
 const handleLikeButtonClick = (e) => {
   e.target.classList.toggle("element__like_active");
 };
 
-// 5. Удаление карточки
+// Удаление карточки
 const handleDeleteButtonClick = (e) => {
   e.target.closest(".element").remove();
 };
 
+// Добавление карточки в начало
 const renderInitial = (item, wrapElement) => {
   const element = createElement(item);
   wrapElement.prepend(element);
@@ -148,6 +176,7 @@ initialCards.forEach(function (item) {
   renderInitial(item, cardElements);
 });
 
+// Редактирование, закрытие попапа и очистка формы
 const handleFormSubmit = (e) => {
   e.preventDefault();
 
@@ -160,4 +189,5 @@ const handleFormSubmit = (e) => {
   e.target.reset();
 };
 
+// Отправка формы
 formElementAdd.addEventListener("submit", handleFormSubmit);
