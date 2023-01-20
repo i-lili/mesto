@@ -38,6 +38,7 @@ const initialTemplate = document
   .querySelector("#element-template")
   .content.querySelector(".element");
 
+  
 // Закрытие попапа нажатием на Esc
 const closePopupByEsc = (e) => {
   if (e.key === "Escape") {
@@ -46,6 +47,7 @@ const closePopupByEsc = (e) => {
     closePopup(popup);
   }
 };
+
 // Закрытие попапа нажатием на overlay
 const closePopupByOverlay = (e) => {
   if (!e.target.closest(".popup__container"))
