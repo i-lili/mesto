@@ -1,3 +1,6 @@
+import { Card } from "./Card.js";
+import { FormValidator } from "./FormValidator.js";
+
 // Закрытие попапа нажатием на Esc
 const closePopupByEsc = (e) => {
   if (e.key === "Escape") {
@@ -7,33 +10,27 @@ const closePopupByEsc = (e) => {
   }
 };
 
-// Закрытие попапа нажатием на overlay
+// Закрытие попапа нажатием на оверлей
 const closePopupByOverlay = (e) => {
   if (!e.target.closest(".popup__container"))
     closePopup(e.target.closest(".popup"));
 };
 
-// Открытие и закрытие попапов
+// Закрытие попапа
 const closePopup = (popup) => {
   popup.classList.remove("popup_is-opened");
   // Закрытие попапа нажатием на Esc
   document.removeEventListener("keyup", closePopupByEsc);
 };
 
-const openPopup = (popup) => {
+// Открытие попапа
+export const openPopup = (popup) => {
   popup.classList.add("popup_is-opened");
   // Открытие попапа нажатием на Esc
   document.addEventListener("keyup", closePopupByEsc);
 };
 
-// Открытие формы редактирования профиля
-editPopupOpenButtonElement.addEventListener("click", () => {
-  nameInput.value = profileName.textContent;
-  jobInput.value = profileJob.textContent;
-  openPopup(editPopup);
-});
-
-// Закрытие попапа
+// Закрытие попапов
 popupCloseButtonElements.forEach((button) => {
   const popup = button.closest(".popup");
 
@@ -44,7 +41,15 @@ popupCloseButtonElements.forEach((button) => {
   });
 });
 
-// Редактированиe и закрытие попапа
+
+// Открытие формы редактирования профиля
+editPopupOpenButtonElement.addEventListener("click", () => {
+  nameInput.value = profileName.textContent;
+  jobInput.value = profileJob.textContent;
+  openPopup(editPopup);
+});
+
+// Редактирование профиля и закрытие попапа
 function handleProfileFormSubmit(e) {
   e.preventDefault();
 
@@ -61,65 +66,46 @@ addPopupOpenButtonElement.addEventListener("click", () => {
   openPopup(addPopup);
 });
 
-// Создание карточки
-function createElement(item) {
-  const initial = initialTemplate.cloneNode(true);
-  const initialTitle = initial.querySelector(".element__title");
-  const initialLink = initial.querySelector(".element__image");
-
-  const initialDeleteButton = initial.querySelector(".element__trash");
-  const initialLikeButton = initial.querySelector(".element__like");
-
-  initialDeleteButton.addEventListener("click", handleDeleteButtonClick);
-  initialLikeButton.addEventListener("click", handleLikeButtonClick);
-
-  initialTitle.textContent = item.title;
-  initialLink.src = item.link;
-  initialLink.alt = `Картинка: ${item.title}`;
-
-  // Открытие попапа с картинкой
-  initialLink.addEventListener("click", (e) => {
-    popupImage.src = e.target.src;
-    popupImage.alt = e.target.alt;
-    popupCaption.textContent = initialTitle.textContent;
-    openPopup(imagePopup);
-  });
-
-  return initial;
-}
-
-// Лайк карточки
-const handleLikeButtonClick = (e) => {
-  e.target.classList.toggle("element__like_active");
-};
-
-// Удаление карточки
-const handleDeleteButtonClick = (e) => {
-  e.target.closest(".element").remove();
-};
-
-// Добавление карточки в начало
-const renderCard = (item, wrapElement) => {
-  const element = createElement(item);
-  wrapElement.prepend(element);
-};
-
-initialCards.forEach(function (item) {
-  renderCard(item, cardElements);
+// Создание экземпляра класса Card для каждой карточки
+initialCards.forEach((cardData) => {
+  const card = new Card(cardData, initialTemplate);
+  cardElements.appendChild(card.getCard());
 });
 
-// Редактирование, закрытие попапа и очистка формы
+// Добавление карточки и закрытие попапа
 const handleFormAddSubmit = (e) => {
   e.preventDefault();
 
-  const initial = {
-    title: titleInput.value,
-    link: linkInput.value,
-  };
-  renderCard(initial, cardElements);
+  const newCard = new Card(
+    {
+      title: titleInput.value,
+      link: linkInput.value,
+    },
+    initialTemplate
+  );
+
+  cardElements.prepend(newCard.getCard());
+
   closePopup(addPopup);
-  e.target.reset();
+  formElementAdd.reset();
 };
 
 // Отправка формы
 formElementAdd.addEventListener("submit", handleFormAddSubmit);
+
+// Объявление переменных для валидации
+const settings = {
+  formSelector: ".popup__form",
+  inputSelector: ".popup__input",
+  submitButtonSelector: ".popup__button",
+  inactiveButtonClass: "popup__button_disabled",
+  inputErrorClass: "popup__input_type_error",
+  errorClass: "popup__error_visible",
+};
+
+//Создание экземпляра класса FormValidator для каждой проверяемой формы
+const formValidatorEdit = new FormValidator(settings, formElementEdit);
+formValidatorEdit.enableValidation();
+
+const formValidatorAdd = new FormValidator(settings, formElementAdd);
+formValidatorAdd.enableValidation();
