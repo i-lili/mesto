@@ -1,4 +1,4 @@
-import { openPopup } from "./index.js";
+import { openPopup, popupImage, popupCaption, imagePopup } from "./index.js";
 
 export class Card {
   // Конструктор принимает данные и селектор template-элемента класса Card
@@ -11,24 +11,26 @@ export class Card {
   // Приватный метод для работы с разметкой и установки прослушивателей событий
   _createCard() {
     // Клонируем template-элемент
-    const cardElement = this._templateSelector.cloneNode(true);
+    this._cardElement = document
+      .querySelector(this._templateSelector)
+      .content.querySelector(".element")
+      .cloneNode(true);
 
     // Элементы для заголовка и ссылки
-    const cardTitle = cardElement.querySelector(".element__title");
-    const cardLink = cardElement.querySelector(".element__image");
+    const cardTitle = this._cardElement.querySelector(".element__title");
+    const cardLink = this._cardElement.querySelector(".element__image");
 
     // Элементы для кнопок
-    const cardDeleteButton = cardElement.querySelector(".element__trash");
-    const cardLikeButton = cardElement.querySelector(".element__like");
+    const cardDeleteButton = this._cardElement.querySelector(".element__trash");
+    this._cardLikeButton = this._cardElement.querySelector(".element__like");
 
     // Устанавливаем прослушиватели событий
-    cardDeleteButton.addEventListener(
-      "click",
-      this._handleDeleteButtonClick.bind(this)
+    cardLink.addEventListener("click", (e) => this._handleCardClick(e));
+    this._cardLikeButton.addEventListener("click", (e) =>
+      this._handleLikeButtonClick(e)
     );
-    cardLikeButton.addEventListener(
-      "click",
-      this._handleLikeButtonClick.bind(this)
+    cardDeleteButton.addEventListener("click", (e) =>
+      this._handleDeleteButtonClick(e)
     );
 
     // Заполняем элементы данными
@@ -36,29 +38,33 @@ export class Card {
     cardLink.src = this._link;
     cardLink.alt = `Image: ${this._title}`;
 
-    // Прослушиватель события для открытия попапа с картинкой
-    cardLink.addEventListener("click", (e) => {
-      popupImage.src = e.target.src;
-      popupImage.alt = e.target.alt;
-      popupCaption.textContent = cardTitle.textContent;
-      openPopup(imagePopup);
-    });
+    // Возвращаем готовую карточку
+    return this._cardElement;
+  }
 
-    return cardElement;
+  // Приватный метод для открытия попапа с картинкой
+  _handleCardClick(e) {
+    popupImage.src = e.target.src;
+    popupImage.alt = e.target.alt;
+    popupCaption.textContent = e.target.alt;
+
+    openPopup(imagePopup);
   }
 
   // Приватный метод для установки лайка
-  _handleLikeButtonClick(e) {
-    e.target.classList.toggle("element__like_active");
+  _handleLikeButtonClick() {
+    this._cardLikeButton.classList.toggle("element__like_active");
   }
 
   // Приватный метод для удаления карточки
-  _handleDeleteButtonClick(e) {
-    e.target.closest(".element").remove();
+  _handleDeleteButtonClick() {
+    this._cardElement.remove();
+    this._cardElement = null;
   }
 
-  // Публичный метод, который возвращает полностью работоспособный и наполненный данными элемент карточки
-  getCard() {
-    return this._createCard();
+  // публичный метод, который возвращает полностью работоспособный и наполненный данными элемент карточки
+  generateCard() {
+    this._createCard();
+    return this._cardElement;
   }
 }

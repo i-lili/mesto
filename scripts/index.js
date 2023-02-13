@@ -1,6 +1,30 @@
 import { Card } from "./Card.js";
 import { FormValidator } from "./FormValidator.js";
 
+// Переменные
+const editPopup = document.querySelector("#edit-popup");
+const addPopup = document.querySelector("#add-popup");
+export const imagePopup = document.querySelector("#image-popup");
+const popupCloseButtonElements = document.querySelectorAll(".popup__close");
+const popupEditOpenButtonElement = document.querySelector(
+  ".profile__edit-button"
+);
+const formElementEdit = document.querySelector('[name="edit"]');
+const formElementAdd = document.querySelector('[name="add"]');
+const nameInput = document.querySelector(".popup__input_item_name");
+const jobInput = document.querySelector(".popup__input_item_job");
+const titleInput = document.querySelector(".popup__input_item_title");
+const linkInput = document.querySelector(".popup__input_item_link");
+const profileName = document.querySelector(".profile__name");
+const profileJob = document.querySelector(".profile__job");
+const popupAddOpenButtonElement = document.querySelector(
+  ".profile__add-button"
+);
+export const popupImage = document.querySelector(".popup__image");
+export const popupCaption = document.querySelector(".popup__caption");
+const cardElements = document.querySelector(".elements");
+const initialTemplate = "#element-template";
+
 // Закрытие попапа нажатием на Esc
 const closePopupByEsc = (e) => {
   if (e.key === "Escape") {
@@ -12,8 +36,11 @@ const closePopupByEsc = (e) => {
 
 // Закрытие попапа нажатием на оверлей
 const closePopupByOverlay = (e) => {
-  if (!e.target.closest(".popup__container"))
-    closePopup(e.target.closest(".popup"));
+  if (e.target.classList.contains("popup")) {
+    const popup = document.querySelector(".popup_is-opened");
+
+    closePopup(popup);
+  }
 };
 
 // Закрытие попапа
@@ -26,7 +53,7 @@ const closePopup = (popup) => {
 // Открытие попапа
 export const openPopup = (popup) => {
   popup.classList.add("popup_is-opened");
-  // Открытие попапа нажатием на Esc
+  // Закрытие попапа нажатием на Esc
   document.addEventListener("keyup", closePopupByEsc);
 };
 
@@ -41,9 +68,8 @@ popupCloseButtonElements.forEach((button) => {
   });
 });
 
-
 // Открытие формы редактирования профиля
-editPopupOpenButtonElement.addEventListener("click", () => {
+popupEditOpenButtonElement.addEventListener("click", () => {
   nameInput.value = profileName.textContent;
   jobInput.value = profileJob.textContent;
   openPopup(editPopup);
@@ -61,34 +87,70 @@ function handleProfileFormSubmit(e) {
 // Отправка формы
 formElementEdit.addEventListener("submit", handleProfileFormSubmit);
 
-// Открытие формы добавления карточки
-addPopupOpenButtonElement.addEventListener("click", () => {
+// Шесть карточек «из коробки»
+const initialCards = [
+  {
+    title: "Архыз",
+    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/arkhyz.jpg",
+  },
+  {
+    title: "Челябинская область",
+    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/chelyabinsk-oblast.jpg",
+  },
+  {
+    title: "Иваново",
+    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/ivanovo.jpg",
+  },
+  {
+    title: "Камчатка",
+    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kamchatka.jpg",
+  },
+  {
+    title: "Холмогорский район",
+    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/kholmogorsky-rayon.jpg",
+  },
+  {
+    title: "Байкал",
+    link: "https://pictures.s3.yandex.net/frontend-developer/cards-compressed/baikal.jpg",
+  },
+];
+
+// Кнопка добавления новой карточки не активна при первом открытии попапа, не позволяет добавить пустую карточку.
+// Кнопка не активна если карточку добавили и открыли попап снова.
+popupAddOpenButtonElement.addEventListener("click", () => {
   openPopup(addPopup);
+  formElementAdd.reset();
+  formValidatorAdd.enableValidation();
 });
 
-// Создание экземпляра класса Card для каждой карточки
-initialCards.forEach((cardData) => {
+// Функция createCard возвращает готовую карточку с уже установленными обработчиками через return
+function createCard(cardData) {
   const card = new Card(cardData, initialTemplate);
-  cardElements.appendChild(card.getCard());
+  const cardElement = card.generateCard();
+
+  return cardElement;
+}
+
+// Добавление карточек из массива initialCards
+initialCards.forEach((cardData) => {
+  const cardElement = createCard(cardData);
+  cardElements.append(cardElement);
 });
 
 // Добавление карточки и закрытие попапа
-const handleFormAddSubmit = (e) => {
+function handleFormAddSubmit(e) {
   e.preventDefault();
 
-  const newCard = new Card(
-    {
-      title: titleInput.value,
-      link: linkInput.value,
-    },
-    initialTemplate
-  );
+  const cardData = {
+    title: titleInput.value,
+    link: linkInput.value,
+  };
 
-  cardElements.prepend(newCard.getCard());
+  const cardElement = createCard(cardData);
+  cardElements.prepend(cardElement);
 
   closePopup(addPopup);
-  formElementAdd.reset();
-};
+}
 
 // Отправка формы
 formElementAdd.addEventListener("submit", handleFormAddSubmit);
