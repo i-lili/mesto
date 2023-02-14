@@ -51,12 +51,20 @@ export class FormValidator {
       this._settings.submitButtonSelector
     );
 
-    this._toggleButton(this._inputs, this._button);
     this._inputs.forEach((input) => {
       input.addEventListener("input", () => {
         this._checkInputValidity(input);
         this._toggleButton(this._inputs, this._button);
       });
+    });
+  }
+
+  // Публичный метод, который сбрасывает валидацию формы
+  resetValidation() {
+    this._toggleButton(this._inputs, this._button);
+
+    this._inputs.forEach((input) => {
+      this._hideError(input);
     });
   }
 

@@ -1,15 +1,14 @@
-import { openPopup, popupImage, popupCaption, imagePopup } from "./index.js";
-
 export class Card {
   // Конструктор принимает данные и селектор template-элемента класса Card
-  constructor(data, templateSelector) {
+  constructor(data, templateSelector, handleCardClick) {
     this._title = data.title;
     this._link = data.link;
     this._templateSelector = templateSelector;
+    this._handleCardClick = handleCardClick;
   }
 
-  // Приватный метод для работы с разметкой и установки прослушивателей событий
-  _createCard() {
+  // Публичный метод, который возвращает полностью работоспособный и наполненный данными элемент карточки
+  createCard() {
     // Клонируем template-элемент
     this._cardElement = document
       .querySelector(this._templateSelector)
@@ -25,13 +24,15 @@ export class Card {
     this._cardLikeButton = this._cardElement.querySelector(".element__like");
 
     // Устанавливаем прослушиватели событий
-    cardLink.addEventListener("click", (e) => this._handleCardClick(e));
-    this._cardLikeButton.addEventListener("click", (e) =>
-      this._handleLikeButtonClick(e)
-    );
-    cardDeleteButton.addEventListener("click", (e) =>
-      this._handleDeleteButtonClick(e)
-    );
+    cardDeleteButton.addEventListener("click", () => {
+      this._handleDeleteButtonClick();
+    });
+    this._cardLikeButton.addEventListener("click", () => {
+      this._handleLikeButtonClick();
+    });
+    cardLink.addEventListener("click", () => {
+      this._handleCardClick(this._title, this._link);
+    });
 
     // Заполняем элементы данными
     cardTitle.textContent = this._title;
@@ -40,15 +41,6 @@ export class Card {
 
     // Возвращаем готовую карточку
     return this._cardElement;
-  }
-
-  // Приватный метод для открытия попапа с картинкой
-  _handleCardClick(e) {
-    popupImage.src = e.target.src;
-    popupImage.alt = e.target.alt;
-    popupCaption.textContent = e.target.alt;
-
-    openPopup(imagePopup);
   }
 
   // Приватный метод для установки лайка
@@ -60,11 +52,5 @@ export class Card {
   _handleDeleteButtonClick() {
     this._cardElement.remove();
     this._cardElement = null;
-  }
-
-  // публичный метод, который возвращает полностью работоспособный и наполненный данными элемент карточки
-  generateCard() {
-    this._createCard();
-    return this._cardElement;
   }
 }

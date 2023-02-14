@@ -4,7 +4,9 @@ import { FormValidator } from "./FormValidator.js";
 // Переменные
 const editPopup = document.querySelector("#edit-popup");
 const addPopup = document.querySelector("#add-popup");
-export const imagePopup = document.querySelector("#image-popup");
+
+const imagePopup = document.querySelector("#image-popup");
+
 const popupCloseButtonElements = document.querySelectorAll(".popup__close");
 const popupEditOpenButtonElement = document.querySelector(
   ".profile__edit-button"
@@ -20,8 +22,10 @@ const profileJob = document.querySelector(".profile__job");
 const popupAddOpenButtonElement = document.querySelector(
   ".profile__add-button"
 );
-export const popupImage = document.querySelector(".popup__image");
-export const popupCaption = document.querySelector(".popup__caption");
+
+const popupImage = document.querySelector(".popup__image");
+const popupCaption = document.querySelector(".popup__caption");
+
 const cardElements = document.querySelector(".elements");
 const initialTemplate = "#element-template";
 
@@ -37,9 +41,7 @@ const closePopupByEsc = (e) => {
 // Закрытие попапа нажатием на оверлей
 const closePopupByOverlay = (e) => {
   if (e.target.classList.contains("popup")) {
-    const popup = document.querySelector(".popup_is-opened");
-
-    closePopup(popup);
+    closePopup(e.target);
   }
 };
 
@@ -51,7 +53,7 @@ const closePopup = (popup) => {
 };
 
 // Открытие попапа
-export const openPopup = (popup) => {
+const openPopup = (popup) => {
   popup.classList.add("popup_is-opened");
   // Закрытие попапа нажатием на Esc
   document.addEventListener("keyup", closePopupByEsc);
@@ -81,6 +83,7 @@ function handleProfileFormSubmit(e) {
 
   profileName.textContent = nameInput.value;
   profileJob.textContent = jobInput.value;
+
   closePopup(editPopup);
 }
 
@@ -118,15 +121,23 @@ const initialCards = [
 // Кнопка добавления новой карточки не активна при первом открытии попапа, не позволяет добавить пустую карточку.
 // Кнопка не активна если карточку добавили и открыли попап снова.
 popupAddOpenButtonElement.addEventListener("click", () => {
-  openPopup(addPopup);
   formElementAdd.reset();
-  formValidatorAdd.enableValidation();
+  openPopup(addPopup);
+  formValidatorAdd.resetValidation();
 });
+
+// Функция открытия попапа с картинкой
+function handleCardClick(title, link) {
+  popupImage.src = link;
+  popupImage.alt = title;
+  popupCaption.textContent = title;
+  openPopup(imagePopup);
+}
 
 // Функция createCard возвращает готовую карточку с уже установленными обработчиками через return
 function createCard(cardData) {
-  const card = new Card(cardData, initialTemplate);
-  const cardElement = card.generateCard();
+  const card = new Card(cardData, initialTemplate, handleCardClick);
+  const cardElement = card.createCard();
 
   return cardElement;
 }
