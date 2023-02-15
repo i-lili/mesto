@@ -74,6 +74,9 @@ popupCloseButtonElements.forEach((button) => {
 popupEditOpenButtonElement.addEventListener("click", () => {
   nameInput.value = profileName.textContent;
   jobInput.value = profileJob.textContent;
+
+  formValidatorEdit.resetValidation();
+
   openPopup(editPopup);
 });
 

@@ -31,14 +31,14 @@ export class FormValidator {
   }
 
   // Приватный метод для изменения состояния кнопки сабмита
-  _toggleButton(inputs, button) {
-    const isValid = inputs.every((input) => input.validity.valid);
+  _toggleButton() {
+    const isValid = this._inputs.every((input) => input.validity.valid);
     if (isValid) {
-      button.classList.remove(this._settings.inactiveButtonClass);
-      button.disabled = false;
+      this._button.classList.remove(this._settings.inactiveButtonClass);
+      this._button.disabled = false;
     } else {
-      button.classList.add(this._settings.inactiveButtonClass);
-      button.disabled = true;
+      this._button.classList.add(this._settings.inactiveButtonClass);
+      this._button.disabled = true;
     }
   }
 
@@ -54,14 +54,14 @@ export class FormValidator {
     this._inputs.forEach((input) => {
       input.addEventListener("input", () => {
         this._checkInputValidity(input);
-        this._toggleButton(this._inputs, this._button);
+        this._toggleButton();
       });
     });
   }
 
   // Публичный метод, который сбрасывает валидацию формы
   resetValidation() {
-    this._toggleButton(this._inputs, this._button);
+    this._toggleButton();
 
     this._inputs.forEach((input) => {
       this._hideError(input);
