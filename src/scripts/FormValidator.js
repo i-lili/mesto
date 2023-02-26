@@ -7,7 +7,6 @@ export class FormValidator {
     this._button = this._form.querySelector(
       this._settings.submitButtonSelector
     );
-    this._setHandlers();
   }
 
   // Приватный метод для проверки валидности поля

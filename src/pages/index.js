@@ -42,7 +42,7 @@ function handleEditProfileButtonClick() {
 
 // Обработка события отправки формы добавления карты
 function handleFormAddSubmit() {
-  const card = createCard({
+  const card = cardData({
     title: titleInput.value,
     link: linkInput.value,
   });
@@ -57,7 +57,7 @@ function handleCardClick(title, link) {
 }
 
 // Функция осуществляет отрисовку каждого отдельного элемента
-function createCard(item) {
+function cardData(item) {
   // Создаем экземпляр класса Card
   const card = new Card(item, initialTemplate, handleCardClick);
   const cardElement = card.createCard();
@@ -80,7 +80,7 @@ const cardsSection = new Section(
   {
     items: initialCards,
     renderer: (item) => {
-      const card = createCard(item);
+      const card = cardData(item);
       cardsSection.addItem(card);
     },
   },
