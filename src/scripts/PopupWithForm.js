@@ -2,14 +2,15 @@ import { Popup } from "./Popup.js";
 
 export class PopupWithForm extends Popup {
   // Принимает в конструктор селектор попапа и колбэк сабмита формы
-  constructor(selector, submitForm) {
+  constructor(selector, handleSubmit) {
     super(selector);
-    this._submitForm = submitForm;
+    this._handleSubmit = handleSubmit;
+    this._inputList = this._popupElement.querySelectorAll(".popup__input");
+    this._formElement = this._popupElement.querySelector(".popup__form");
   }
 
   // Приватный метод _getInputValues, который собирает данные всех полей формы
   _getInputValues() {
-    this._inputList = this._formElement.querySelectorAll(".popup__input");
     this._formValues = {};
     this._inputList.forEach((input) => {
       this._formValues[input.name] = input.value;
@@ -20,10 +21,9 @@ export class PopupWithForm extends Popup {
   // Метод добавляет обработчик клика иконке закрытия, добавляет обработчик сабмита формы
   setEventListeners() {
     super.setEventListeners();
-    this._formElement = this._popupElement.querySelector(".popup__form");
     this._formElement.addEventListener("submit", (evt) => {
       evt.preventDefault();
-      this._submitForm(this._getInputValues());
+      this._handleSubmit(this._getInputValues());
     });
   }
   // Перезаписывает родительский метод close, так как при закрытии попапа форма должна ещё и сбрасываться

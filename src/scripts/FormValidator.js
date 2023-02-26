@@ -3,6 +3,11 @@ export class FormValidator {
   constructor(settings, form) {
     this._settings = settings;
     this._form = form;
+    this._inputs = this._form.querySelectorAll(this._settings.inputSelector);
+    this._button = this._form.querySelector(
+      this._settings.submitButtonSelector
+    );
+    this._setHandlers();
   }
 
   // Приватный метод для проверки валидности поля
@@ -32,7 +37,7 @@ export class FormValidator {
 
   // Приватный метод для изменения состояния кнопки сабмита
   _toggleButton() {
-    const isValid = this._inputs.every((input) => input.validity.valid);
+    const isValid = [...this._inputs].every((input) => input.validity.valid);
     if (isValid) {
       this._button.classList.remove(this._settings.inactiveButtonClass);
       this._button.disabled = false;
@@ -44,13 +49,6 @@ export class FormValidator {
 
   // Приватный метод для установки всех обработчиков
   _setHandlers() {
-    this._inputs = [
-      ...this._form.querySelectorAll(this._settings.inputSelector),
-    ];
-    this._button = this._form.querySelector(
-      this._settings.submitButtonSelector
-    );
-
     this._inputs.forEach((input) => {
       input.addEventListener("input", () => {
         this._checkInputValidity(input);
