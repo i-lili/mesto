@@ -15,7 +15,6 @@ import {
   titleInput,
   linkInput,
   popupAddOpenButtonElement,
-  cardsContainer,
   initialTemplate,
   validationConfig,
   initialCards,
@@ -42,7 +41,7 @@ function handleEditProfileButtonClick() {
 
 // Обработка события отправки формы добавления карты
 function handleFormAddSubmit() {
-  const card = cardData({
+  const card = createCard({
     title: titleInput.value,
     link: linkInput.value,
   });
@@ -57,9 +56,9 @@ function handleCardClick(title, link) {
 }
 
 // Функция осуществляет отрисовку каждого отдельного элемента
-function cardData(item) {
+function createCard(cardData) {
   // Создаем экземпляр класса Card
-  const card = new Card(item, initialTemplate, handleCardClick);
+  const card = new Card(cardData, initialTemplate, handleCardClick);
   const cardElement = card.createCard();
 
   return cardElement;
@@ -79,8 +78,8 @@ const userInfo = new UserInfo({
 const cardsSection = new Section(
   {
     items: initialCards,
-    renderer: (item) => {
-      const card = cardData(item);
+    renderer: (cardData) => {
+      const card = createCard(cardData);
       cardsSection.addItem(card);
     },
   },

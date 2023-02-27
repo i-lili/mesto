@@ -10,7 +10,6 @@ export const linkInput = document.querySelector(".popup__input_item_link");
 export const popupAddOpenButtonElement = document.querySelector(
   ".profile__add-button"
 );
-export const cardsContainer = document.querySelector(".elements");
 export const initialTemplate = "#element-template";
 // Объявление переменных для валидации
 export const validationConfig = {
