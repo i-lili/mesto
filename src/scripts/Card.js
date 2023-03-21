@@ -1,36 +1,67 @@
+// Этот класс представляет карточку с изображением, описанием, а также функциями лайка и удаления.
 export class Card {
-  // Конструктор принимает данные и селектор template-элемента класса Card
-  constructor(data, templateSelector, handleCardClick) {
-    this._title = data.title;
+  // Конструктор принимает данные карты, селектор элементов шаблона, обратные вызовы для обработки нажатия на карту, проверки владельца карты и открытия всплывающего окна удаления карты.
+  constructor(
+    data,
+    templateSelector,
+    handleCardClick,
+    currentUserId,
+    handleDeleteCard,
+    handleDeletePopupOpen,
+    handleLikeCard
+  ) {
+    this._id = data._id;
+    this._name = data.name;
     this._link = data.link;
     this._templateSelector = templateSelector;
     this._handleCardClick = handleCardClick;
+    this._likes = data.likes || [];
+    this._isOwner = data.owner._id === currentUserId;
+    this._handleDeleteCard = handleDeleteCard;
+    this._handleDeletePopupOpen = handleDeletePopupOpen;
+    this._handleLikeCard = handleLikeCard;
+    this._isLiked = this._likes.some((like) => like._id === currentUserId);
   }
 
-  // Публичный метод, который возвращает полностью работоспособный и наполненный данными элемент карточки
+  // Публичный метод для создания элемента карты DOM с данными и добавления прослушивателей событий.
   createCard() {
     this._cardElement = this._getTemplate();
 
-    // Элементы для заголовка и ссылки
-    const cardTitle = this._cardElement.querySelector(".element__title");
+    // Получаем элементы для названия карты и ссылки на изображение
+    const cardName = this._cardElement.querySelector(".element__name");
     this._cardImage = this._cardElement.querySelector(".element__image");
-    // Элементы для кнопок
+    // Получаем элементы для кнопок карты
     this._cardLikeButton = this._cardElement.querySelector(".element__like");
     this._cardDeleteButton = this._cardElement.querySelector(".element__trash");
 
-    // Устанавливаем прослушиватели событий
+    this._cardLikeCount = this._cardElement.querySelector(
+      ".element__like-count"
+    );
+    this._undateLikesCount();
+
+    // Проверяем, является ли карточка уже отмеченной как "понравившейся"
+    if (this._isLiked) {
+      this._cardLikeButton.classList.add("element__like_active");
+    }
+
+    // Показывать кнопку удаления только на карточках, созданных пользователем
+    if (!this._isOwner) {
+      this._cardDeleteButton.remove();
+    }
+
+    // Установка слушателей событий
     this._setEventListeners();
 
-    // Заполняем элементы данными
-    cardTitle.textContent = this._title;
+    // Заполняем элементы карточки данными
+    cardName.textContent = this._name;
     this._cardImage.src = this._link;
-    this._cardImage.alt = `Image: ${this._title}`;
+    this._cardImage.alt = `Image: ${this._name}`;
 
-    // Возвращаем готовую карточку
+    // Возвращаем заполненную карточку
     return this._cardElement;
   }
 
-  // Приватный метод для установки слушателей событий
+  // Приватный метод установки слушателей событий для карты
   _setEventListeners() {
     // Слушатель клика по кнопке лайка
     this._cardLikeButton.addEventListener("click", () => {
@@ -44,11 +75,11 @@ export class Card {
 
     // Слушатель клика по картинке
     this._cardImage.addEventListener("click", () => {
-      this._handleCardClick(this._title, this._link);
+      this._handleCardClick(this._name, this._link);
     });
   }
 
-  // Приватный метод для клонирования template-элемента
+  // Приватный метод клонирования шаблона карты
   _getTemplate() {
     this._cardElement = document
       .querySelector(this._templateSelector)
@@ -57,14 +88,39 @@ export class Card {
     return this._cardElement;
   }
 
-  // Приватный метод для установки лайка
+  // Приватный метод обработки клика по кнопке лайка
   _handleLikeButtonClick() {
-    this._cardLikeButton.classList.toggle("element__like_active");
+    const isLiked = this._cardLikeButton.classList.contains(
+      "element__like_active"
+    );
+    this._handleLikeCard(this._id, !isLiked)
+      .then((cardData) => {
+        this._likes = cardData.likes;
+        this._cardLikeButton.classList.toggle("element__like_active");
+        this._undateLikesCount();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
   }
 
-  // Приватный метод для удаления карточки
+  // Метод обновления счетчика лайков
+  _undateLikesCount() {
+    this._cardLikeCount.textContent = this._likes.length;
+  }
+
+  // Приватный метод обработки клика по кнопке удаления карточки
   _handleDeleteButtonClick() {
-    this._cardElement.remove();
-    this._cardElement = null;
+    this._handleDeletePopupOpen(() => {
+      this._handleDeleteCard(this._id)
+        .then(() => {
+          this._cardElement.remove();
+          this._cardElement = null;
+          popupDeleteCard.close();
+        })
+        .catch((err) => {
+          console.log(err);
+        });
+    });
   }
 }

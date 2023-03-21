@@ -7,6 +7,8 @@ export class PopupWithForm extends Popup {
     this._handleSubmit = handleSubmit;
     this._inputList = this._popupElement.querySelectorAll(".popup__input");
     this._formElement = this._popupElement.querySelector(".popup__form");
+    this._button = this._popupElement.querySelector(".popup__button");
+    this._initialButtonText = this._button.textContent;
   }
 
   // Приватный метод _getInputValues, который собирает данные всех полей формы
@@ -30,5 +32,17 @@ export class PopupWithForm extends Popup {
   close() {
     super.close();
     this._formElement.reset();
+  }
+
+  // Функция renderLoading() устанавливает текст кнопки в "Сохранение...",
+  // что позволяет пользователю понимать, что происходит сохранение данных.
+  renderLoading() {
+    this._button.textContent = "Сохранение...";
+  }
+
+  // Функция renderInitial() возвращает исходный текст кнопки,
+  // который был передан в конструктор класса.
+  renderInitial() {
+    this._button.textContent = this._initialButtonText;
   }
 }
