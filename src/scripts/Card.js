@@ -6,7 +6,6 @@ export class Card {
     templateSelector,
     handleCardClick,
     currentUserId,
-    handleDeleteCard,
     handleDeletePopupOpen,
     handleLikeCard
   ) {
@@ -17,7 +16,6 @@ export class Card {
     this._handleCardClick = handleCardClick;
     this._likes = data.likes || [];
     this._isOwner = data.owner._id === currentUserId;
-    this._handleDeleteCard = handleDeleteCard;
     this._handleDeletePopupOpen = handleDeletePopupOpen;
     this._handleLikeCard = handleLikeCard;
     this._isLiked = this._likes.some((like) => like._id === currentUserId);
@@ -95,32 +93,33 @@ export class Card {
     );
     this._handleLikeCard(this._id, !isLiked)
       .then((cardData) => {
-        this._likes = cardData.likes;
-        this._cardLikeButton.classList.toggle("element__like_active");
-        this._undateLikesCount();
+        this.setLikesInfo(cardData);
       })
       .catch((err) => {
         console.log(err);
       });
   }
 
-  // Метод обновления счетчика лайков
+  // Публичный метод для установки информации о лайках
+  setLikesInfo(cardData) {
+    this._likes = cardData.likes;
+    this._cardLikeButton.classList.toggle("element__like_active");
+    this._undateLikesCount();
+  }
+
+  // Приватный метод обновления счетчика лайков
   _undateLikesCount() {
     this._cardLikeCount.textContent = this._likes.length;
   }
 
+  // Публичный метод для удаления карточки из DOM
+  remove() {
+    this._cardElement.remove();
+    this._cardElement = null;
+  }
+
   // Приватный метод обработки клика по кнопке удаления карточки
   _handleDeleteButtonClick() {
-    this._handleDeletePopupOpen(() => {
-      this._handleDeleteCard(this._id)
-        .then(() => {
-          this._cardElement.remove();
-          this._cardElement = null;
-          popupDeleteCard.close();
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    });
+    this._handleDeletePopupOpen(this);
   }
 }

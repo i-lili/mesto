@@ -13,21 +13,13 @@ export class PopupWithDelete extends Popup {
     this._submitHandler = submitAction;
   }
 
-  // Метод для обработки отправки формы
-  _handleSubmit(evt) {
-    evt.preventDefault();
-    this._submitHandler();
-    this.close();
-  }
-
+  // Переопределяем метод открытия всплывающего окна
   setEventListeners() {
     super.setEventListeners();
-    // Установка слушателя события клика на кнопку "Да"
     this._popupElement
       .querySelector(".popup__button-delete")
       .addEventListener("click", (evt) => {
-        // Обработка события отправки формы
-        this._handleSubmit(evt);
+        this._submitHandler();
       });
   }
 }

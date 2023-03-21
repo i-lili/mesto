@@ -100,9 +100,19 @@ function handleCardClick(name, link) {
   popupImageProfile.open(name, link);
 }
 
-// Функция для обработки открытия всплывающего окна удаления
-function handleDeletePopupOpen(submitAction) {
-  popupDeleteCard.setSubmitAction(submitAction);
+// Функция для открытия всплывающего окна удаления карточки
+function handleDeletePopupOpen(cardInstance) {
+  popupDeleteCard.setSubmitAction(() => {
+    api
+      .deleteCard(cardInstance._id)
+      .then(() => {
+        cardInstance.remove();
+        popupDeleteCard.close();
+      })
+      .catch((err) => {
+        console.log(err);
+      });
+  });
   popupDeleteCard.open();
 }
 
@@ -113,7 +123,6 @@ function createCard(cardData) {
     initialTemplate,
     handleCardClick,
     currentUserId,
-    (cardId) => api.deleteCard(cardId),
     handleDeletePopupOpen,
     (cardId, isLiked) => api.changeLikeCardStatus(cardId, isLiked)
   );
@@ -131,7 +140,7 @@ const api = new Api({
   },
 });
 
-// // Инициализация экземпляров всплывающих окон и валидаторов форм
+// Инициализация экземпляров всплывающих окон и валидаторов форм
 const popupEditProfile = new PopupWithForm(
   "#edit-popup",
   handleProfileFormSubmit
